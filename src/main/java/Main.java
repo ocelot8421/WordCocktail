@@ -23,18 +23,22 @@ public class Main {
         while (wantContinue == 'y') {
             String engWord = randomEnglishWord(englishWords);
             askRemovingEngWord(scanner, englishWords, engWord);
-            askShowingEngWordImage(scanner, parentDirPath, engWord);
+            ImagePlus imp = askShowingEngWordImage(scanner, parentDirPath, engWord);
             wantContinue = promptAnswer(scanner, "Do you want continue? (y/n)");
+            imp.close();
         }
     }
 
-    private static void askShowingEngWordImage(Scanner scanner, String parentDirPath, String engWord) {
+    private static ImagePlus askShowingEngWordImage(Scanner scanner, String parentDirPath, String engWord) {
         char show = promptAnswer(scanner, "Show picture? (y/n)");
+        ImagePlus imp = new ImagePlus();
         if (show == 'y') {
             //Open image (tutorial of image-handling by ImageJ: https://www.baeldung.com/java-images#imagej)
             String imagePath = parentDirPath + File .separator + engWord + ".png";
-            openImage(imagePath);
+            imp = openImage(imagePath);
+            return imp;
         }
+        return imp;
     }
 
     private static void askRemovingEngWord(Scanner scanner, List<String> englishWords, String engWord) {
@@ -46,8 +50,7 @@ public class Main {
 
     private static char promptAnswer(Scanner scanner, String question) {
         System.out.println(question);
-        char answer = scanner.next().charAt(0);
-        return answer;
+        return scanner.next().charAt(0);
     }
 
     //Random english word
@@ -73,15 +76,15 @@ public class Main {
         return englishWords;
     }
 
-    private static void openImage(String imagePath) {
+    private static ImagePlus openImage(String imagePath) {
         ImagePlus imp = IJ.openImage(imagePath);
 
         ImageProcessor ip = imp.getProcessor();
         ip.setColor(Color.BLUE);
         ip.setLineWidth(4);
         ip.drawRect(10, 10, imp.getWidth() - 20, imp.getHeight() - 20);
-
         imp.show();
+        return imp;
     }
 
 }
