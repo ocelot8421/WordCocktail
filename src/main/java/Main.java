@@ -8,10 +8,15 @@ import java.util.*;
 import java.util.List;
 
 public class Main {
+    //colors for highlighting the word
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_CYAN = "\u001B[36m";
 
     public static void main(String[] args) {
+        Random random = new Random();
+
         //Directory that contains the images of words
-        System.out.println("Where are the images of words? (For example: C:/words/english)");
+        System.out.println("Where are the images of words? \n(For example: C:/words/english/...)");
         Scanner scanner = new Scanner(System.in);
         String parentDirPath = scanner.nextLine();
 
@@ -21,11 +26,16 @@ public class Main {
         //Engine
         char wantContinue = 'y';
         while (wantContinue == 'y') {
-            String engWord = randomEnglishWord(englishWords);
-            askRemovingEngWord(scanner, englishWords, engWord);
-            ImagePlus imp = askShowingEngWordImage(scanner, parentDirPath, engWord);
-            wantContinue = promptAnswer(scanner, "Do you want continue? (y/n)");
-            imp.close();
+            if (englishWords.size() > 0) {
+                String engWord = randomEnglishWord(random, englishWords);
+                askRemovingEngWord(scanner, englishWords, engWord);
+                ImagePlus imp = askShowingEngWordImage(scanner, parentDirPath, engWord);
+                wantContinue = promptAnswer(scanner, "Do you want continue? (y/n)");
+                imp.close();
+            } else {
+                System.out.println("The end. You've finished the task. :)");
+                wantContinue = 'n';
+            }
         }
     }
 
@@ -34,7 +44,7 @@ public class Main {
         ImagePlus imp = new ImagePlus();
         if (show == 'y') {
             //Open image (tutorial of image-handling by ImageJ: https://www.baeldung.com/java-images#imagej)
-            String imagePath = parentDirPath + File .separator + engWord + ".png";
+            String imagePath = parentDirPath + File.separator + engWord + ".png";
             imp = openImage(imagePath);
             return imp;
         }
@@ -45,6 +55,7 @@ public class Main {
         char remove = promptAnswer(scanner, "Remove word? (y/n)");
         if (remove == 'y') {
             englishWords.remove(engWord);
+            System.out.println("Remaining words: " + englishWords.size());
         }
     }
 
@@ -54,12 +65,11 @@ public class Main {
     }
 
     //Random english word
-    private static String randomEnglishWord(List<String> englishWords) {
-        Random random = new Random();
+    private static String randomEnglishWord(Random random, List<String> englishWords) {
         int randomInt = random.nextInt(englishWords.size());
         String engWord = englishWords.get(randomInt);
-        System.out.print("Your word:  ");
-        System.out.println(engWord);
+        System.out.print("Your word:  " + ANSI_CYAN);
+        System.out.println(engWord + ANSI_RESET);
         return engWord;
     }
 
@@ -69,7 +79,8 @@ public class Main {
         List<String> englishWords = new ArrayList<>();
         for (String word : Objects.requireNonNull(parentDir.list())) {
             String[] tempWords = word.split("\\.");
-            if (Objects.equals(tempWords[1], "png")) {
+            if (tempWords.length > 1 && Objects.equals(tempWords[1], "png")
+                    && !tempWords[0].startsWith("Ké")) {
                 englishWords.add(tempWords[0]);
             }
         }
