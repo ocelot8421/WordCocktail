@@ -77,18 +77,6 @@ public class Main {
         return parentDirPathOSIndependent.toString();
     }
 
-//    private static ImagePlus askShowingEngWordImage(Scanner scanner, String parentDirPath, String engWord) {
-//        char show = promptAnswer(scanner, "Show picture? (y/n)");
-//        ImagePlus imp = new ImagePlus();
-//        if (show == 'y') {
-//            //Open image (tutorial of image-handling by AWT: https://www.baeldung.com/java-images#imagej)
-//            String imagePath = parentDirPath + File.separator + engWord + ".png";
-//            imp = openImage(imagePath);
-//            return imp;
-//        }
-//        return imp;
-//    }
-
     private static void askRemovingEngWord(Scanner scanner, List<String> englishWords, String engWord) {
         char remove = promptAnswer(scanner, "Remove word? (y/n)");
         if (remove == 'y') {
@@ -124,16 +112,4 @@ public class Main {
         }
         return englishWords;
     }
-
-//    private static ImagePlus openImage(String imagePath) {
-//        ImagePlus imp = IJ.openImage(imagePath);
-//
-//        ImageProcessor ip = imp.getProcessor();
-//        ip.setColor(Color.BLUE);
-//        ip.setLineWidth(4);
-//        ip.drawRect(10, 10, imp.getWidth() - 20, imp.getHeight() - 20);
-//        imp.show();
-//        return imp;
-//    }
-
 }
