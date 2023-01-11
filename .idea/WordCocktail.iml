@@ -11,6 +11,5 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: net.imagej:ij:1.51h" level="project" />
   </component>
 </module>

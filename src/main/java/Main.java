@@ -1,24 +1,21 @@
-import ij.IJ;
-import ij.ImagePlus;
-import ij.process.ImageProcessor;
-
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.*;
+import java.io.IOException;
 import java.util.List;
+import java.util.*;
 
 public class Main {
-    //colors for highlighting the word
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_CYAN = "\u001B[36m";
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         Random random = new Random();
 
         //Directory that contains the images of words
         System.out.println("Where are the images of words? \n(For example: C:/words/english/...)");
         Scanner scanner = new Scanner(System.in);
-        String parentDirPath = scanner.nextLine();
+        String parentDirPath = makeParentDirPAth(scanner);
 
         //List of english words
         List<String> englishWords = listEnglishWords(parentDirPath);
@@ -29,27 +26,68 @@ public class Main {
             if (englishWords.size() > 0) {
                 String engWord = randomEnglishWord(random, englishWords);
                 askRemovingEngWord(scanner, englishWords, engWord);
-                ImagePlus imp = askShowingEngWordImage(scanner, parentDirPath, engWord);
+//                ImagePlus imp = askShowingEngWordImage(scanner, parentDirPath, engWord);
+                JFrame pic = askShowingImage(scanner, parentDirPath, engWord);
                 wantContinue = promptAnswer(scanner, "Do you want continue? (y/n)");
-                imp.close();
+//                imp.close();
+                pic.setVisible(false);
             } else {
                 System.out.println("The end. You've finished the task. :)");
                 wantContinue = 'n';
             }
         }
+        System.out.println("End of the program");
     }
 
-    private static ImagePlus askShowingEngWordImage(Scanner scanner, String parentDirPath, String engWord) {
+    private static JFrame askShowingImage(Scanner scanner, String parentDirPath, String engWord) {
         char show = promptAnswer(scanner, "Show picture? (y/n)");
-        ImagePlus imp = new ImagePlus();
+        JFrame f = new JFrame();
         if (show == 'y') {
-            //Open image (tutorial of image-handling by ImageJ: https://www.baeldung.com/java-images#imagej)
+            //Open image (tutorial of image-handling by AWT: https://www.baeldung.com/java-images#imagej)
             String imagePath = parentDirPath + File.separator + engWord + ".png";
-            imp = openImage(imagePath);
-            return imp;
+            BufferedImage myPicture;
+            try {
+                myPicture = ImageIO.read(new File(imagePath));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            Graphics2D g = (Graphics2D) myPicture.getGraphics();
+            g.setStroke(new BasicStroke(3));
+            g.setColor(Color.BLUE);
+            g.drawRect(10, 10, myPicture.getWidth() - 20, myPicture.getHeight() - 20);
+
+            JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+            JPanel jPanel = new JPanel();
+            jPanel.add(picLabel);
+
+            f.setSize(new Dimension(myPicture.getWidth(), myPicture.getHeight()));
+            f.add(jPanel);
+            f.setVisible(true);
         }
-        return imp;
+        return f;
     }
+
+    private static String makeParentDirPAth(Scanner scanner) {
+        String parentDirPath = scanner.nextLine();
+        StringBuilder parentDirPathOSIndependent = new StringBuilder();
+        for (char s : parentDirPath.toCharArray()) {
+            parentDirPathOSIndependent.append(s);
+        }
+        return parentDirPathOSIndependent.toString();
+    }
+
+//    private static ImagePlus askShowingEngWordImage(Scanner scanner, String parentDirPath, String engWord) {
+//        char show = promptAnswer(scanner, "Show picture? (y/n)");
+//        ImagePlus imp = new ImagePlus();
+//        if (show == 'y') {
+//            //Open image (tutorial of image-handling by AWT: https://www.baeldung.com/java-images#imagej)
+//            String imagePath = parentDirPath + File.separator + engWord + ".png";
+//            imp = openImage(imagePath);
+//            return imp;
+//        }
+//        return imp;
+//    }
 
     private static void askRemovingEngWord(Scanner scanner, List<String> englishWords, String engWord) {
         char remove = promptAnswer(scanner, "Remove word? (y/n)");
@@ -68,8 +106,8 @@ public class Main {
     private static String randomEnglishWord(Random random, List<String> englishWords) {
         int randomInt = random.nextInt(englishWords.size());
         String engWord = englishWords.get(randomInt);
-        System.out.print("Your word:  " + ANSI_CYAN);
-        System.out.println(engWord + ANSI_RESET);
+        System.out.print("Your word:  ");
+        System.out.println(engWord);
         return engWord;
     }
 
@@ -87,15 +125,15 @@ public class Main {
         return englishWords;
     }
 
-    private static ImagePlus openImage(String imagePath) {
-        ImagePlus imp = IJ.openImage(imagePath);
-
-        ImageProcessor ip = imp.getProcessor();
-        ip.setColor(Color.BLUE);
-        ip.setLineWidth(4);
-        ip.drawRect(10, 10, imp.getWidth() - 20, imp.getHeight() - 20);
-        imp.show();
-        return imp;
-    }
+//    private static ImagePlus openImage(String imagePath) {
+//        ImagePlus imp = IJ.openImage(imagePath);
+//
+//        ImageProcessor ip = imp.getProcessor();
+//        ip.setColor(Color.BLUE);
+//        ip.setLineWidth(4);
+//        ip.drawRect(10, 10, imp.getWidth() - 20, imp.getHeight() - 20);
+//        imp.show();
+//        return imp;
+//    }
 
 }
