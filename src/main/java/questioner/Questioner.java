@@ -11,7 +11,7 @@ public class Questioner {
         System.out.println(question);
         scanner.nextLine();
         String answer = scanner.nextLine();
-        System.out.println("Searching words...\n");
+        System.out.println();
         return answer;
     }
 

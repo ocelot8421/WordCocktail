@@ -14,34 +14,52 @@ public class Main {
     public static void main(String[] args) {
 
         //Asking what the user want to do
+        starterQuestion();
+
+        System.out.println("End of the program");
+    }
+
+    //Asking the user what it want to do at the beginning of the program
+    private static void starterQuestion() {
         char flag = promptCharAnswer("What do you want to do?\n" +
-                "e: learning English words\n" +
+                "e: learning new English words\n" +
                 "h: practice translating from Hungarian to english\n" +
                 "n: rename screenshot of new words");
-        while (flag != 'e' && flag != 'h' && flag != 'n'){
-                flag = promptCharAnswer("Waiting for valid answer... (e, h, n)");
+        while (flag != 'e' && flag != 'h' && flag != 'n') {
+            flag = promptCharAnswer("Waiting for valid answer... (e, h, n)");
         }
         switch (flag) {
             case 'e':
                 System.out.println("Starting English word recognition task...\n");
+                //Continually asking for random words from the list until the list is empty
+                engine();
                 break;
             case 'h':
-                System.out.println("Starting a translation task from Hungarian to English...\n");
+                System.out.println("Starting a translation task from Hungarian to English...\n"); //TODO
                 break;
             case 'n':
                 System.out.println("Importing new screenshots...\n");
+                importNewScreenshots();
                 break;
         }
+    }
 
+    //Import screenshots about new words
+    private static void importNewScreenshots() {
+        NameGiver nameGiver = new NameGiver();
+        nameGiver.renameScreenshots();
+    }
+
+    //Learning new English words
+    private static void engine() {
         //Directory that contains the images of words
-        String parentDirPath = askDirectoryLocation(
-                "Where are the images of words to learn? \n(For example: C:/words/english/...)"
-        );
-
+        String parentDirPath = askDirectoryLocation("Where are the images of words to learn?\n" +
+                "(For example: C:/words/english/...)");
+        System.out.println("Searching words...\n");
         //List of english words
         List<String> englishWords = listEnglishWords(parentDirPath);
 
-        //Engine
+        //Continually asking for random words from the list until the list is empty
         Random random = new Random();
         char wantContinue = 'y';
         while (wantContinue == 'y') {
@@ -52,11 +70,10 @@ public class Main {
                 wantContinue = promptCharAnswer("Do you want continue? (y/n)");
                 jFrame.setVisible(false);
             } else {
-                System.out.println("The end. You've finished the task. :)");
+                System.out.println("The list of words to learn is empty. You've finished the task. :)");
                 wantContinue = 'n';
             }
         }
-        System.out.println("End of the program");
     }
 
     //Asking if you would like to see the picture(screenshot from a video) of the english word.

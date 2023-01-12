@@ -7,6 +7,13 @@
     <groupId>groupId</groupId>
     <artifactId>WordCocktail</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+    </dependencies>
     <packaging>jar</packaging>
 
     <properties>
