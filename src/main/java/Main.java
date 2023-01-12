@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Random random = new Random();
 
         //Directory that contains the images of words
@@ -24,12 +24,10 @@ public class Main {
         char wantContinue = 'y';
         while (wantContinue == 'y') {
             if (englishWords.size() > 0) {
-                String engWord = randomEnglishWord(random, englishWords);
+                String engWord = showRandomWord(random, englishWords);
                 askRemovingEngWord(scanner, englishWords, engWord);
-//                ImagePlus imp = askShowingEngWordImage(scanner, parentDirPath, engWord);
                 JFrame pic = askShowingImage(scanner, parentDirPath, engWord);
                 wantContinue = promptAnswer(scanner, "Do you want continue? (y/n)");
-//                imp.close();
                 pic.setVisible(false);
             } else {
                 System.out.println("The end. You've finished the task. :)");
@@ -39,11 +37,12 @@ public class Main {
         System.out.println("End of the program");
     }
 
+    //Asking if you would like to see the picture(screenshot from a video) of the english word.
+    //Tutorial of image-handling: https://www.baeldung.com/java-images).
     private static JFrame askShowingImage(Scanner scanner, String parentDirPath, String engWord) {
         char show = promptAnswer(scanner, "Show picture? (y/n)");
         JFrame f = new JFrame();
         if (show == 'y') {
-            //Open image (tutorial of image-handling by AWT: https://www.baeldung.com/java-images#imagej)
             String imagePath = parentDirPath + File.separator + engWord + ".png";
             BufferedImage myPicture;
             try {
@@ -68,6 +67,7 @@ public class Main {
         return f;
     }
 
+    //Making a path of directory where the english words are.
     private static String makeParentDirPAth(Scanner scanner) {
         String parentDirPath = scanner.nextLine();
         StringBuilder parentDirPathOSIndependent = new StringBuilder();
@@ -77,6 +77,7 @@ public class Main {
         return parentDirPathOSIndependent.toString();
     }
 
+    //Asking if you would like to remove the word from the list that contains words to learn.
     private static void askRemovingEngWord(Scanner scanner, List<String> englishWords, String engWord) {
         char remove = promptAnswer(scanner, "Remove word? (y/n)");
         if (remove == 'y') {
@@ -85,13 +86,14 @@ public class Main {
         }
     }
 
+    //Asking a yes-no question.
     private static char promptAnswer(Scanner scanner, String question) {
         System.out.println(question);
         return scanner.next().charAt(0);
     }
 
-    //Random english word
-    private static String randomEnglishWord(Random random, List<String> englishWords) {
+    //Showing a random word from the list of words to learn.
+    private static String showRandomWord(Random random, List<String> englishWords) {
         int randomInt = random.nextInt(englishWords.size());
         String engWord = englishWords.get(randomInt);
         System.out.print("Your word:  ");
@@ -99,7 +101,8 @@ public class Main {
         return engWord;
     }
 
-    //List of english words
+    //Making a list of the pgn-files' name.
+    //Doesn't handle pgn that's name starts "Ké" (origins from Képernyőkép(hu) = Screenshot(eng)).
     private static List<String> listEnglishWords(String parentDirPath) {
         File parentDir = new File(parentDirPath);
         List<String> englishWords = new ArrayList<>();
