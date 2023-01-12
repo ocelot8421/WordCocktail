@@ -7,28 +7,50 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
+import static questioner.Questioner.*;
+
 public class Main {
 
     public static void main(String[] args) {
-        Random random = new Random();
+
+        //Asking what the user want to do
+        char flag = promptCharAnswer("What do you want to do?\n" +
+                "e: learning English words\n" +
+                "h: practice translating from Hungarian to english\n" +
+                "n: rename screenshot of new words");
+        while (flag != 'e' && flag != 'h' && flag != 'n'){
+                flag = promptCharAnswer("Waiting for valid answer... (e, h, n)");
+        }
+        switch (flag) {
+            case 'e':
+                System.out.println("Starting English word recognition task...\n");
+                break;
+            case 'h':
+                System.out.println("Starting a translation task from Hungarian to English...\n");
+                break;
+            case 'n':
+                System.out.println("Importing new screenshots...\n");
+                break;
+        }
 
         //Directory that contains the images of words
-        System.out.println("Where are the images of words? \n(For example: C:/words/english/...)");
-        Scanner scanner = new Scanner(System.in);
-        String parentDirPath = makeParentDirPAth(scanner);
+        String parentDirPath = askDirectoryLocation(
+                "Where are the images of words to learn? \n(For example: C:/words/english/...)"
+        );
 
         //List of english words
         List<String> englishWords = listEnglishWords(parentDirPath);
 
         //Engine
+        Random random = new Random();
         char wantContinue = 'y';
         while (wantContinue == 'y') {
             if (englishWords.size() > 0) {
                 String engWord = showRandomWord(random, englishWords);
-                askRemovingEngWord(scanner, englishWords, engWord);
-                JFrame pic = askShowingImage(scanner, parentDirPath, engWord);
-                wantContinue = promptAnswer(scanner, "Do you want continue? (y/n)");
-                pic.setVisible(false);
+                askRemovingEngWord(englishWords, engWord);
+                JFrame jFrame = askShowingImage(parentDirPath, engWord);
+                wantContinue = promptCharAnswer("Do you want continue? (y/n)");
+                jFrame.setVisible(false);
             } else {
                 System.out.println("The end. You've finished the task. :)");
                 wantContinue = 'n';
@@ -39,9 +61,9 @@ public class Main {
 
     //Asking if you would like to see the picture(screenshot from a video) of the english word.
     //Tutorial of image-handling: https://www.baeldung.com/java-images).
-    private static JFrame askShowingImage(Scanner scanner, String parentDirPath, String engWord) {
-        char show = promptAnswer(scanner, "Show picture? (y/n)");
-        JFrame f = new JFrame();
+    private static JFrame askShowingImage(String parentDirPath, String engWord) {
+        char show = promptCharAnswer("Show picture? (y/n)");
+        JFrame jFrame = new JFrame();
         if (show == 'y') {
             String imagePath = parentDirPath + File.separator + engWord + ".png";
             BufferedImage myPicture;
@@ -60,44 +82,27 @@ public class Main {
             JPanel jPanel = new JPanel();
             jPanel.add(picLabel);
 
-            f.setSize(new Dimension(myPicture.getWidth(), myPicture.getHeight()));
-            f.add(jPanel);
-            f.setVisible(true);
+            jFrame.setSize(new Dimension(myPicture.getWidth(), myPicture.getHeight()));
+            jFrame.add(jPanel);
+            jFrame.setVisible(true);
         }
-        return f;
-    }
-
-    //Making a path of directory where the english words are.
-    private static String makeParentDirPAth(Scanner scanner) {
-        String parentDirPath = scanner.nextLine();
-        StringBuilder parentDirPathOSIndependent = new StringBuilder();
-        for (char s : parentDirPath.toCharArray()) {
-            parentDirPathOSIndependent.append(s);
-        }
-        return parentDirPathOSIndependent.toString();
+        return jFrame;
     }
 
     //Asking if you would like to remove the word from the list that contains words to learn.
-    private static void askRemovingEngWord(Scanner scanner, List<String> englishWords, String engWord) {
-        char remove = promptAnswer(scanner, "Remove word? (y/n)");
+    private static void askRemovingEngWord(List<String> englishWords, String engWord) {
+        char remove = promptCharAnswer("Remove word? (y/n)");
         if (remove == 'y') {
             englishWords.remove(engWord);
             System.out.println("Remaining words: " + englishWords.size());
         }
     }
 
-    //Asking a yes-no question.
-    private static char promptAnswer(Scanner scanner, String question) {
-        System.out.println(question);
-        return scanner.next().charAt(0);
-    }
-
     //Showing a random word from the list of words to learn.
     private static String showRandomWord(Random random, List<String> englishWords) {
         int randomInt = random.nextInt(englishWords.size());
         String engWord = englishWords.get(randomInt);
-        System.out.print("Your word:  ");
-        System.out.println(engWord);
+        System.out.println("Your word:  " + engWord);
         return engWord;
     }
 
