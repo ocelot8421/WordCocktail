@@ -1,4 +1,4 @@
-//Changing name of new screenshots into english word.
+package fileModifier;//Changing name of new screenshots into english word.
 //Making links for them and changing name into hungarian translation.
 
 import java.io.BufferedReader;
@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static questioner.Questioner.askDirectoryLocation;
+import static fileModifier.LinkCreator.createLink;
 
 public class NameGiver {
 
@@ -48,20 +49,19 @@ public class NameGiver {
         }
 
         //Make a copy of png files renamed by the english word from csv
+        //Make a link for png files
         for (File listFile : Objects.requireNonNull(dirContent)) {
             if (receiveExtension(listFile).equals("png")) {
+                String nameEnglish = contentCSV.get(i)[2];
+                String nameHungarian = contentCSV.get(i)[3];
                 Path oldName = Paths.get(listFile.getAbsolutePath());
-                Path imgRenamed = Paths.get(
-                        dirDated +
-                                File.separator +
-                                contentCSV.get(i)[2] +
-                                ".png");
-                System.out.println(imgRenamed);
+                Path imgRenamed = Paths.get(dirDated + File.separator + nameEnglish + ".png");
                 try {
                     Files.copy(oldName, imgRenamed, REPLACE_EXISTING);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                createLink(String.valueOf(imgRenamed), dirDated + File.separator + nameHungarian + ".lnk");
                 i--;
             }
         }

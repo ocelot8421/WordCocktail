@@ -9,7 +9,6 @@ public class Questioner {
     //Asking for location of directory
     public static String askDirectoryLocation(String question) {
         System.out.println(question);
-        scanner.nextLine();
         String answer = scanner.nextLine();
         System.out.println();
         return answer;
