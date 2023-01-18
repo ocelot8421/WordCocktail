@@ -26,6 +26,7 @@ public class Main {
                 "h: practice translating from Hungarian to english\n" +
                 "n: rename screenshot of new words");
         while (flag != 'e' && flag != 'h' && flag != 'n') {
+            System.out.println(flag);
             flag = promptCharAnswer("Waiting for valid answer... (e, h, n)");
         }
         switch (flag) {

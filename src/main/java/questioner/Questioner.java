@@ -18,6 +18,11 @@ public class Questioner {
     //Asking a yes-no question.
     public static char promptCharAnswer(String question) {
         System.out.println(question);
-        return scanner.next().charAt(0);
+        String answer = scanner.nextLine();
+        if (answer.length() == 1) {
+            return answer.charAt(0);
+        } else {
+            return ' ';
+        }
     }
 }
