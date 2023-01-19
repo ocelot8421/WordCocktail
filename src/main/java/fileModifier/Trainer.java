@@ -6,35 +6,48 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import static fileModifier.LinkCreator.openLink;
 import static questioner.Questioner.askDirectoryLocation;
 import static questioner.Questioner.promptCharAnswer;
 
 public class Trainer {
 
+    //Import screenshots about new words
+    public static void importNewScreenshots() {
+        NameGiver nameGiver = new NameGiver();
+        nameGiver.renameScreenshots();
+    }
+
     //Learning new English words
-    public static void askRandomEnglishWord() {
+    public static void askRandomWord(String language) {
         //Directory that contains the images of words
         String parentDirPath = askDirectoryLocation("Where are the images of words to learn?\n" +
                 "(For example: C:/words/english/...)");
         System.out.println("Searching words...\n");
         //List of english words
-        List<String> englishWords = listEnglishWords(parentDirPath);
+        List<String> words = listWords(parentDirPath, language);
 
         //Continually asking for random words from the list until the list is empty
         Random random = new Random();
         char wantContinue = 'y';
+        String word;
         while (wantContinue == 'y') {
-            if (englishWords.size() > 0) {
-                String engWord = showRandomWord(random, englishWords);
-                askRemovingEngWord(englishWords, engWord);
-                JFrame jFrame = askShowingImage(parentDirPath, engWord);
+            if (words.size() > 0) {
+                word = showRandomWord(random, words);
+                askRemovingEngWord(words, word);
+                if (Objects.equals(language, ".png")) {
+                    JFrame jFrame = showImage(parentDirPath, word, language);
+                    jFrame.setVisible(false);
+                } else if (Objects.equals(language, ".lnk")) {
+                    openLink(parentDirPath, word, language);
+                }
                 wantContinue = promptCharAnswer("Do you want continue? (y/n)");
-                jFrame.setVisible(false);
             } else {
                 System.out.println("The list of words to learn is empty. You've finished the task. :)");
                 wantContinue = 'n';
@@ -44,12 +57,13 @@ public class Trainer {
 
     //Asking if you would like to see the picture(screenshot from a video) of the english word.
     //Tutorial of image-handling: https://www.baeldung.com/java-images).
-    private static JFrame askShowingImage(String parentDirPath, String engWord) {
+    private static JFrame showImage(String parentDirPath, String word, String language) {
         char show = promptCharAnswer("Show picture? (y/n)");
         JFrame jFrame = new JFrame();
         if (show == 'y') {
-            String imagePath = parentDirPath + File.separator + engWord + ".png";
+            String imagePath = parentDirPath + File.separator + word + language;
             BufferedImage myPicture;
+
             try {
                 myPicture = ImageIO.read(new File(imagePath));
             } catch (IOException e) {
@@ -59,7 +73,7 @@ public class Trainer {
             Graphics2D g = (Graphics2D) myPicture.getGraphics();
             g.setStroke(new BasicStroke(3));
             g.setColor(Color.BLUE);
-            g.drawRect(10, 10, myPicture.getWidth() - 20, myPicture.getHeight() - 20);
+            g.drawRect(10, 10, myPicture.getWidth() - 20, myPicture.getHeight() - 20); //TODO
 
             JLabel picLabel = new JLabel(new ImageIcon(myPicture));
             JPanel jPanel = new JPanel();
@@ -91,22 +105,19 @@ public class Trainer {
 
     //Making a list of the pgn-files' name.
     //Doesn't handle pgn that's name starts "Ké" (origins from Képernyőkép(hu) = Screenshot(eng)).
-    private static List<String> listEnglishWords(String parentDirPath) {
+    private static List<String> listWords(String parentDirPath, String language) {
         File parentDir = new File(parentDirPath);
+        String[] extension = language.split("\\.");
+        String linkOrPng = extension[extension.length - 1];
         List<String> englishWords = new ArrayList<>();
         for (String word : Objects.requireNonNull(parentDir.list())) {
+            System.out.println(word);
             String[] tempWords = word.split("\\.");
-            if (tempWords.length > 1 && Objects.equals(tempWords[1], "png")
+            if (tempWords.length > 1 && Objects.equals(tempWords[1], linkOrPng)
                     && !tempWords[0].startsWith("Ké")) {
                 englishWords.add(tempWords[0]);
             }
         }
         return englishWords;
-    }
-
-    //Import screenshots about new words
-    public static void importNewScreenshots() {
-        NameGiver nameGiver = new NameGiver();
-        nameGiver.renameScreenshots();
     }
 }

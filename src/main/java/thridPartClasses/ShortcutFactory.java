@@ -64,7 +64,7 @@ public class ShortcutFactory {
     /*
      * Creates a VBS file with the passed code and runs it, deleting it after the run has completed
      */
-    private static void newVBS(String code) throws IOException, InterruptedException {
+    public static void newVBS(String code) throws IOException, InterruptedException {
         File script = File.createTempFile("scvbs", ".vbs"); // File where script will be created
 
         // Writes to script file
