@@ -10,7 +10,12 @@ package thridPartClasses;
  * **PLEASE DO NOT REMOVE THIS HEADER**
  */
 
+import org.apache.commons.io.output.WriterOutputStream;
+
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Jackson N. Brienen
@@ -68,7 +73,8 @@ public class ShortcutFactory {
         File script = File.createTempFile("scvbs", ".vbs"); // File where script will be created
 
         // Writes to script file
-        FileWriter writer = new FileWriter(script);
+
+        FileWriter writer = new FileWriter(script, StandardCharsets.UTF_8);
         writer.write(code);
         writer.close();
 
