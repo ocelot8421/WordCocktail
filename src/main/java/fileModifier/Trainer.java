@@ -8,17 +8,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 import static fileModifier.LinkCreator.openLink;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static questioner.Questioner.*;
-import static encoding.DecodeText.decodeText;
-import static encoding.DecodeText2.printHun;
+import static questioner.Questioner.askDirectoryLocation;
+import static questioner.Questioner.promptCharAnswer;
 
-
-//
 public class Trainer {
 
     //Import screenshots of new words
