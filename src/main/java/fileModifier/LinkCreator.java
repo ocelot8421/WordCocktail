@@ -16,7 +16,7 @@ public class LinkCreator {
     //Create a shortcut for a renamed screenshot
     public static void createLink(String source, String linkPath) {
         try {
-            createShortcut(source, linkPath);
+            createShortcut(source, linkPath); //TODO work in only IDE not in terminal
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

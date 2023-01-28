@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 public class DecodeText {
-    public static String decodeText(String input, String encoding) throws IOException {
+    public static String decodeText(String input, String encoding) throws IOException { //TODO delete?
         return
                 new BufferedReader(
                         new InputStreamReader(

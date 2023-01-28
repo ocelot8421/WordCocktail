@@ -22,11 +22,10 @@ public class Trainer {
 
     //Import screenshots of new words
     public static void importNewScreenshots() {
-        NameGiver nameGiver = new NameGiver();
-        nameGiver.renameScreenshots();
+        NameGiver.renameScreenshots();
     }
 
-    //Learning new words
+    //Ask a random word from the list is made of name of pngs/links
     public static void askRandomWord(String language) {
         //The directory that contains the images of words
         String parentDirPath = askDirectoryLocation("Where are the images of words to learn?\n" +
@@ -120,4 +119,5 @@ public class Trainer {
         }
         return englishWords;
     }
+
 }
