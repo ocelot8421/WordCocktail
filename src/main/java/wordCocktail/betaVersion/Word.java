@@ -1,4 +1,4 @@
-package betaVersion;
+package wordCocktail.betaVersion;
 
 import java.io.BufferedReader;
 import java.io.File;

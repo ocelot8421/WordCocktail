@@ -1,15 +1,12 @@
-package fileModifier;
+package wordCocktail.fileModifier;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static questioner.Questioner.promptCharAnswer;
-import static thridPartClasses.ShortcutFactory.createShortcut;
-import static thridPartClasses.ShortcutFactory.newVBS;
+import static wordCocktail.questioner.Questioner.promptCharAnswer;
+import static wordCocktail.thridPartClasses.ShortcutFactory.createShortcut;
+import static wordCocktail.thridPartClasses.ShortcutFactory.newVBS;
 
 public class LinkCreator {
 

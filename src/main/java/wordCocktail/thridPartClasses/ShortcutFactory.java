@@ -1,4 +1,4 @@
-package thridPartClasses;
+package wordCocktail.thridPartClasses;
 
 /*
  * @author Jackson N. Brienen

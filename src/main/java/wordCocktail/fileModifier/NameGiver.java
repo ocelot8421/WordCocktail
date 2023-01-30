@@ -1,7 +1,8 @@
-package fileModifier;//Changing name of new screenshots into english word.
+package wordCocktail.fileModifier;//Changing name of new screenshots into english word.
 //Making links for them and changing name into hungarian translation.
 
-import betaVersion.TxtCreator;
+import wordCocktail.betaVersion.TxtCreator;
+import wordCocktail.encoding.DecodeText;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,16 +18,18 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static questioner.Questioner.askDirectoryLocation;
+import static wordCocktail.questioner.Questioner.askForUTF8Answer;
 
 public class NameGiver {
 
     //Rename new screenshots from the videos
-    public static void renameScreenshots() {
-        String path = askDirectoryLocation("Where are the new screenshots? \n" + //Ask for the source directory
-                "(For example: C:/words/english/...)");
+    public static void renameScreenshots() throws IOException {
+        String path = askForUTF8Answer("Where are the new screenshots? \n" + //Ask for the source directory
+                "(For example: C:/words/english/...) \n");
+//        String newDirectory = new String(askForUt8Answer("How do you want to name the new directory?? \n" + //Ask for the source directory
+//                "(For example: week 0 001122-002233)"), StandardCharsets.UTF_8);
         File pathNewImages = new File(path);
-        Path pathRelevant = Path.of(path);
+        Path pathRelevant = Paths.get(path);
         int pathLength = pathRelevant.getNameCount();
         String newDirectory = pathRelevant.subpath(pathLength - 1, pathLength).toString();
         List<String[]> contentCSV = new ArrayList<>();
@@ -55,7 +58,7 @@ public class NameGiver {
         for (File listFile : Objects.requireNonNull(dirContent)) {
             if (receiveExtension(listFile).equals("png")) { //Receive the part of the file name after dot(".")
                 String nameEnglish = contentCSV.get(i)[2]; //TODO "" filter
-                String nameHungarian = contentCSV.get(i)[3];
+                String nameHungarian = DecodeText.decodeText(contentCSV.get(i)[3], "UTF-8");
                 Path oldName = Paths.get(listFile.getAbsolutePath());
                 Path engName = Paths.get(dirDated + File.separator + nameEnglish + ".png");
                 try {

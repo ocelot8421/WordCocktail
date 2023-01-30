@@ -1,9 +1,17 @@
-import betaVersion.QuestionProviderFromAllWords;
-import fileModifier.NameGiver;
-import fileModifier.Trainer;
-import questioner.Questioner;
+package wordCocktail;
 
+import wordCocktail.betaVersion.QuestionProviderFromAllWords;
+import wordCocktail.encoding.DecodeText;
+import wordCocktail.fileModifier.NameGiver;
+import wordCocktail.fileModifier.Trainer;
+import wordCocktail.questioner.Questioner;
+
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Scanner;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Main {
     private static final String HUN = ".lnk"; //if the names of links are hungarian words
@@ -14,17 +22,17 @@ public class Main {
     private static final char X = 'x'; //function chooser - beta - exercise with every saved english words
     private static final char Y = 'y'; //function chooser - beta - exercise translating every saved hungarian words to english
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         starterQuestion(); //Asks what the user want to do
         System.out.println("End of the program");
     }
 
     //Asks the user what she/he wants to do at the beginning of the program
-    private static void starterQuestion() {
+    private static void starterQuestion() throws IOException {
         char flag = Questioner.promptCharAnswer("What do you want to do?\n" +
                 E + ": learning new English words\n" +
                 H + ": practice translating from Hungarian to english\n" +
-                W + ": rename screenshot of new words\n" +
+                W + ": rename screenshot of new words - work in only IDE!\n" +
                 X + ": new function - handle the english words separately\n" +
                 Y + ": new function - handle the hungarian words separately");
         while (!List.of(E, H, W, X, Y).contains(flag)) {

@@ -1,8 +1,8 @@
-package betaVersion;
+package wordCocktail.betaVersion;
 
 import java.util.Date;
 
-import static questioner.Questioner.askDirectoryLocation;
+import static wordCocktail.questioner.Questioner.askDirectoryLocation;
 
 public class QuestionProviderFromAllWords {
     public static void askRandomlyFromAllWords(String language) {

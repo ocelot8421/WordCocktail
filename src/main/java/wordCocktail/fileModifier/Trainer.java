@@ -1,4 +1,4 @@
-package fileModifier;
+package wordCocktail.fileModifier;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -13,15 +13,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import static fileModifier.LinkCreator.openLink;
+import static wordCocktail.fileModifier.LinkCreator.openLink;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static questioner.Questioner.askDirectoryLocation;
-import static questioner.Questioner.promptCharAnswer;
+import static wordCocktail.questioner.Questioner.askDirectoryLocation;
+import static wordCocktail.questioner.Questioner.promptCharAnswer;
 
 public class Trainer {
 
     //Import screenshots of new words
-    public static void importNewScreenshots() {
+    public static void importNewScreenshots() throws IOException {
         NameGiver.renameScreenshots();
     }
 
@@ -109,7 +109,7 @@ public class Trainer {
         String linkOrPng = extension[extension.length - 1];
         List<String> englishWords = new ArrayList<>();
         for (String word : Objects.requireNonNull(parentDir.list())) {
-            byte[] bytes = word.getBytes(StandardCharsets.UTF_8);
+            byte[] bytes = word.getBytes(StandardCharsets.UTF_8); //https://northcoder.com/post/java-console-output-with-utf-8/
             String wordUtf8 = new String(bytes, StandardCharsets.UTF_8);
             String[] tempWords = wordUtf8.split("\\.");
             if (tempWords.length > 1 && Objects.equals(tempWords[1], linkOrPng)

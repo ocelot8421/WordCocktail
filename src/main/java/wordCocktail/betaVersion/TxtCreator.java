@@ -1,4 +1,6 @@
-package betaVersion;
+package wordCocktail.betaVersion;
+
+import wordCocktail.encoding.DecodeText;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -11,15 +13,17 @@ import java.time.format.DateTimeFormatter;
 public class TxtCreator {
 
     //Creates txt file for every new words (hun/eng) contains when the word is started to learn, when needed to repeat, so on)
-    public static void createDataTxt(String[] csvRow, Path dirDated) {
+    public static void createDataTxt(String[] csvRow, Path dirDated) throws IOException {
         String savingDateIndex = "saved,";
         String source = dirDated.getName(2) + "," +
                 dirDated.getName(3) + "," +
                 dirDated.getName(4);
-        File fileEng = new File(dirDated + File.separator + csvRow[2] + ".txt");
-        writeStarterDate(fileEng, savingDateIndex, source, csvRow[2]);
-        File fileHun = new File(dirDated + File.separator + csvRow[3] + ".txt");
-        writeStarterDate(fileHun, savingDateIndex, source, csvRow[3]);
+        String engWord = DecodeText.decodeText(csvRow[2], "UTF-8");
+        File fileEng = new File(dirDated + File.separator + engWord + ".txt");
+        writeStarterDate(fileEng, savingDateIndex, source, engWord);
+        String hunWord = DecodeText.decodeText(csvRow[3], "UTF-8");
+        File fileHun = new File(dirDated + File.separator + hunWord + ".txt");
+        writeStarterDate(fileHun, savingDateIndex, source, hunWord);
     }
 
     private static void writeStarterDate(File fileWord, String savingDateIndex, String source, String word) {
