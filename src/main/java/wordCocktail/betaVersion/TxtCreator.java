@@ -14,23 +14,24 @@ public class TxtCreator {
 
     //Creates txt file for every new words (hun/eng) contains when the word is started to learn, when needed to repeat, so on)
     public static void createDataTxt(String[] csvRow, Path dirDated) throws IOException {
-        String savingDateIndex = "saved,";
+        String index = "saved,";
         String source = dirDated.getName(2) + "," +
                 dirDated.getName(3) + "," +
                 dirDated.getName(4);
         String engWord = DecodeText.decodeText(csvRow[2], "UTF-8");
         File fileEng = new File(dirDated + File.separator + engWord + ".txt");
-        writeStarterDate(fileEng, savingDateIndex, source, engWord);
+        writeStarterDate(fileEng, index, source, engWord);
         String hunWord = DecodeText.decodeText(csvRow[3], "UTF-8");
         File fileHun = new File(dirDated + File.separator + hunWord + ".txt");
-        writeStarterDate(fileHun, savingDateIndex, source, hunWord);
+        writeStarterDate(fileHun, index, source, hunWord);
     }
 
-    private static void writeStarterDate(File fileWord, String savingDateIndex, String source, String word) {
+    //TODO write commit with inputs, throws, and so on
+    private static void writeStarterDate(File fileWord, String index, String source, String word) {
         try (FileWriter writer = new FileWriter(fileWord, StandardCharsets.UTF_8)) {
             writer.write("word, " + word + "\n" +
                     "source," + source + "\n" +
-                    savingDateIndex + DateTimeFormatter.ofPattern("yyyy.MM.dd.,HH:mm:ss").format(LocalDateTime.now()));
+                    index + DateTimeFormatter.ofPattern("yyyy.MM.dd.,HH:mm:ss").format(LocalDateTime.now()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

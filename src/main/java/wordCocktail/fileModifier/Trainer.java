@@ -19,12 +19,6 @@ import static wordCocktail.questioner.Questioner.askDirectoryLocation;
 import static wordCocktail.questioner.Questioner.promptCharAnswer;
 
 public class Trainer {
-
-    //Import screenshots of new words
-    public static void importNewScreenshots() throws IOException {
-        NameGiver.renameScreenshots();
-    }
-
     //Ask a random word from the list is made of name of pngs/links
     public static void askRandomWord(String language) {
         //The directory that contains the images of words
