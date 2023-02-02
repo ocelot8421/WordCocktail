@@ -1,11 +1,8 @@
 package wordCocktail.questioner;
 
 import java.io.Console;
-import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 //Tool to get information from user
 public class Questioner {

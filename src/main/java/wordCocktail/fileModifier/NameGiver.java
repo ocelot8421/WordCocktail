@@ -28,19 +28,20 @@ public class NameGiver {
                 "(For example: C:/words/english/...) \n");
 //        String newDirectory = new String(askForUt8Answer("How do you want to name the new directory?? \n" + //Ask for the source directory
 //                "(For example: week 0 001122-002233)"), StandardCharsets.UTF_8);
-        File pathNewImages = new File(path);
         Path pathRelevant = Paths.get(path);
         int pathLength = pathRelevant.getNameCount();
         String newDirectory = pathRelevant.subpath(pathLength - 1, pathLength).toString();
         List<String[]> contentCSV = new ArrayList<>();
-        File[] dirContent = pathNewImages.listFiles();
 
         //Define the csv with english-hungarian words
+        File pathNewImages = new File(path);
+        File[] dirContent = pathNewImages.listFiles();
         for (File listFile : Objects.requireNonNull(dirContent)) {
             if (receiveExtension(listFile).equals("csv")) { //Receive the part of the file name after dot(".")
                 contentCSV = receiveCsvAsList(listFile);
             }
         }
+
         //Make new directory named the actual data and time
         int i = contentCSV.size() - 1;
         Path dirDated = Paths.get(pathNewImages.getParent() +
@@ -57,7 +58,7 @@ public class NameGiver {
         //Make a txt file named hun/eng word
         for (File listFile : Objects.requireNonNull(dirContent)) {
             if (receiveExtension(listFile).equals("png")) { //Receive the part of the file name after dot(".")
-                String nameEnglish = contentCSV.get(i)[2]; //TODO "" filter
+                String nameEnglish = contentCSV.get(i)[2];
                 String nameHungarian = DecodeText.decodeText(contentCSV.get(i)[3], "UTF-8");
                 Path oldName = Paths.get(listFile.getAbsolutePath());
                 Path engName = Paths.get(dirDated + File.separator + nameEnglish + ".png");
@@ -81,6 +82,7 @@ public class NameGiver {
         try (BufferedReader reader = new BufferedReader(new FileReader(listFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                     line = line.replace("\"", "");
                 String[] row = line.split(",");
                 contentCSV.add(row);
             }
