@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class Main {
-    private static final String HUN = ".lnk"; //if the names of links are hungarian words
+    public static final String HUN = ".lnk"; //if the names of links are hungarian words
     private static final String ENG = ".png"; //if the names of images are english words
     private static final char E = 'e'; //function chooser - exercise english words
     private static final char H = 'h'; //function chooser - exercise translating hungarian words to english
