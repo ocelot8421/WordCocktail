@@ -17,7 +17,7 @@ import static wordCocktail.questioner.Questioner.*;
 
 public class QuestionProviderFromAllWords {
 
-    public static void askRandomlyFromAllWords(String language) {
+    public static void askRandomlyFromAllWords(String language) throws IOException {
         //The directory that contains the images of words
         String parentDirPath = askForUTF8Answer("Where are the images of words to learn?\n" +
                 "(For example: C:/words/english/...)");

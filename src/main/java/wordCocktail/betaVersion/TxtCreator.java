@@ -55,14 +55,13 @@ public class TxtCreator {
      * @param source      source of the word, taken from the parent directory path.
      * @param word        english or hungarian word.
      * @param wordForeign translation of the word
+     * @throws IOException
      */
-    private static void writeStarterDate(File file, String source, String word, String wordForeign) {
+    private static void writeStarterDate(File file, String source, String word, String wordForeign) throws IOException {
         try (FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8)) {
             writer.write("word, " + word + " - " + wordForeign + "\n" +
                     "source," + source + "\n" +
                     "saved," + DateTimeFormatter.ofPattern("yyyy.MM.dd.,HH:mm:ss").format(LocalDateTime.now()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

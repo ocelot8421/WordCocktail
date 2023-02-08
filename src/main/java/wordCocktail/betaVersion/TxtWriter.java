@@ -4,39 +4,46 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class TxtWriter {
-    public static void saveTrainingDate(String parentDirPath, String word) {
-        String index = "repeated,";
+    /**
+     * Makes a copy of every line of the original txt file in a temporal file then writes the practice date and time
+     * into the training diary after the "repeated" index. After that, deletes the original file and rename
+     * the temporal file to the original name. //TODO any plainer solution?
+     * @param parentDirPath directory path where the words are located
+     * @param word actual word
+     * @throws IOException
+     */
+    public static void saveTrainingDate(String parentDirPath, String word) throws IOException {
         File fileOld = new File(parentDirPath + File.separator + word + ".txt");
         File fileTemp = new File(parentDirPath + File.separator + word + "Temp" + ".txt");
         try (FileInputStream fis = new FileInputStream(fileOld); //https://mkyong.com/java/how-to-read-utf-8-encoded-data-from-a-file-java
              InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
              BufferedReader reader = new BufferedReader(isr);
-             FileOutputStream fos = new FileOutputStream(fileTemp); //https://mkyong.com/java/how-to-read-utf-8-encoded-data-from-a-file-java
+             FileOutputStream fos = new FileOutputStream(fileTemp);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-             BufferedWriter writer = new BufferedWriter(osw))
-        {
+             BufferedWriter writer = new BufferedWriter(osw)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 writer.append(line);
                 writer.newLine();
             }
-            writer.append(index)
-                    .append(DateTimeFormatter
-                            .ofPattern("yyyy.MM.dd.,HH:mm:ss")
-                            .format(LocalDateTime.now()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            writeDateAndTime(writer);
         }
         boolean delFlag = fileOld.delete();
         boolean renameFlag = fileTemp.renameTo(new File(parentDirPath + File.separator + word + ".txt"));
-        if (delFlag && renameFlag){
-            System.out.println();
+        if (delFlag && renameFlag) {
+            System.out.println("(Time saved in the practice diary.)");
         }
+    }
+
+    /**
+     * Writes the practice date and time into the training diary after the "repeated" index.
+     * @param writer BufferedWriter resource from "try" block
+     **/
+    private static void writeDateAndTime(BufferedWriter writer) throws IOException {
+        writer.append("repeated").append(DateTimeFormatter
+                .ofPattern("yyyy.MM.dd.,HH:mm:ss")
+                .format(LocalDateTime.now()));
     }
 }
