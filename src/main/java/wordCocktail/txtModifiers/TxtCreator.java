@@ -1,4 +1,4 @@
-package wordCocktail.betaVersion;
+package wordCocktail.txtModifiers;
 
 import wordCocktail.encoding.DecodeText;
 
@@ -60,8 +60,9 @@ public class TxtCreator {
     private static void writeStarterDate(File file, String source, String word, String wordForeign) throws IOException {
         try (FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8)) {
             writer.write("word, " + word + " - " + wordForeign + "\n" +
-                    "source," + source + "\n" +
-                    "saved," + DateTimeFormatter.ofPattern("yyyy.MM.dd.,HH:mm:ss").format(LocalDateTime.now()));
+                    "level,0\n" +
+                    "source, " + source + "\n" +
+                    "saved, " + DateTimeFormatter.ofPattern("yyyy.MM.dd.,HH:mm:ss").format(LocalDateTime.now()));
         }
     }
 }

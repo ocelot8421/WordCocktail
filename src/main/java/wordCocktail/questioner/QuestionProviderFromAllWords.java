@@ -1,4 +1,6 @@
-package wordCocktail.fileModifier;
+package wordCocktail.questioner;
+
+import wordCocktail.txtModifiers.TxtWriter;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -6,27 +8,24 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Random;
 
 import static wordCocktail.fileModifier.LinkCreator.openLink;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static wordCocktail.questioner.Questioner.askDirectoryLocation;
-import static wordCocktail.questioner.Questioner.promptCharAnswer;
+import static wordCocktail.questioner.Questioner.*;
 
-public class Trainer {
-    //Ask a random word from the list is made of name of pngs/links
-    public static void askRandomWord(String language) {
+public class QuestionProviderFromAllWords {
+
+    public static void askRandomlyFromAllWords(String language) throws IOException {
         //The directory that contains the images of words
-        String parentDirPath = askDirectoryLocation("Where are the images of words to learn?\n" +
+        String parentDirPath = askForUTF8Answer("Where are the images of words to learn?\n" +
                 "(For example: C:/words/english/...)");
         System.out.println("Searching words...\n");
+
         //List of words that are needed to learn
         List<String> words = listWords(parentDirPath, language);
+
 
         //Continually asks for random words from the list until the list is empty
         Random random = new Random();
@@ -36,6 +35,7 @@ public class Trainer {
             if (words.size() > 0) {
                 word = showRandomWord(random, words);
                 askRemovingEngWord(words, word);
+                TxtWriter.saveTrainingDate(parentDirPath, word);
                 if (Objects.equals(language, ".png")) {
                     JFrame jFrame = showImage(parentDirPath, word, language);
                     wantContinue = promptCharAnswer("Do you want continue? (y/n)");
@@ -90,8 +90,7 @@ public class Trainer {
     private static String showRandomWord(Random random, List<String> words) {
         int randomInt = random.nextInt(words.size());
         String word = words.get(randomInt);
-        PrintStream out = new PrintStream(System.out, true, UTF_8); // https://northcoder.com/post/java-console-output-with-utf-8/
-        out.println("Your word:  " + word);
+        System.out.println("Your word:  " + word);
         return word;
     }
 
@@ -113,5 +112,4 @@ public class Trainer {
         }
         return englishWords;
     }
-
 }

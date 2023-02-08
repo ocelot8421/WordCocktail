@@ -1,11 +1,11 @@
 package wordCocktail;
 
-import wordCocktail.betaVersion.QuestionProviderFromAllWords;
 import wordCocktail.fileModifier.NameGiver;
-import wordCocktail.fileModifier.Trainer;
+import wordCocktail.questioner.QuestionProviderFromAllWords;
 import wordCocktail.questioner.Questioner;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 public class Main {
@@ -14,45 +14,39 @@ public class Main {
     private static final char E = 'e'; //function chooser - exercise english words
     private static final char H = 'h'; //function chooser - exercise translating hungarian words to english
     private static final char W = 'w'; //function chooser - name new words and screenshots
-    private static final char X = 'x'; //function chooser - beta - exercise with every saved english words
-    private static final char Y = 'y'; //function chooser - beta - exercise translating every saved hungarian words to english
+    private static final char A = 'a'; //function chooser - analyzes the knowledge of word
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParseException {
         starterQuestion(); //Asks what the user want to do
         System.out.println("End of the program");
     }
 
     //Asks the user what she/he wants to do at the beginning of the program
-    private static void starterQuestion() throws IOException {
+    private static void starterQuestion() throws IOException, ParseException {
         char flag = Questioner.promptCharAnswer("What do you want to do?\n" +
                 E + ": learning new English words\n" +
                 H + ": practice translating from Hungarian to english\n" +
                 W + ": rename screenshot of new words\n" +
-                X + ": TXT function - handle the english words separately\n" +
-                Y + ": TXT function - handle the hungarian words separately");
-        while (!List.of(E, H, W, X, Y).contains(flag)) {
+                A + ": analyzes the knowledge of word");
+        while (!List.of(E, H, W, A).contains(flag)) {
             System.out.println(flag);
-            flag = Questioner.promptCharAnswer("Waiting for valid answer... (" + E + H + W + X + Y + ")");
+            flag = Questioner.promptCharAnswer("Waiting for valid answer... (" + E + H + W + A + ")");
         }
         switch (flag) {
-            case E:
-                System.out.println("Starting English word recognition task...\n");
-                Trainer.askRandomWord(ENG); //Continually asking for random words from the list until the list is empty
-                break;
-            case H:
-                System.out.println("Starting a translation task from Hungarian to English...\n");
-                Trainer.askRandomWord(HUN);
+            case A:
+                System.out.println("Analyzing the knowledge level of given words -- BETA");
+                Analyzer.analyze();
                 break;
             case W:
                 System.out.println("Importing new screenshots...\n");
                 NameGiver.renameScreenshots();
                 break;
-            case X:
-                System.out.println("Beta version - handle english words separately\n");
+            case E:
+                System.out.println("Starting English word recognition task...\n");
                 QuestionProviderFromAllWords.askRandomlyFromAllWords(ENG);
                 break;
-            case Y:
-                System.out.println("Beta version - handle hungarian words separately\n");
+            case H:
+                System.out.println("Starting a translation task from Hungarian to English...\n");
                 QuestionProviderFromAllWords.askRandomlyFromAllWords(HUN);
                 break;
         }

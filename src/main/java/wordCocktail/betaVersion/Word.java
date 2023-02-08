@@ -8,7 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Word {
+public class Word { //TODO needed?
     private final String wordEng;
     private final String parentDir;
     private Date lastDate;

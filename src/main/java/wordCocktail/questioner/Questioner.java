@@ -26,15 +26,7 @@ public class Questioner {
             System.exit(1);
         }
         System.out.println(question);
-        return console.readLine("typed input: %n");
-    }
-
-    public static byte[] askForUt8Answer(String question) {
-        System.out.println(question);
-        String answerRaw = scanner.nextLine();
-        byte[] answerByte = answerRaw.getBytes(StandardCharsets.UTF_8);
-        System.out.println();
-        return answerByte;
+        return console.readLine("type input: %n");
     }
 
     //Asking a yes-no question.

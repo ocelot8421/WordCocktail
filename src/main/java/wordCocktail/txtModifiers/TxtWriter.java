@@ -1,4 +1,4 @@
-package wordCocktail.betaVersion;
+package wordCocktail.txtModifiers;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

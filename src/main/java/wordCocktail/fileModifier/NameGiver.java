@@ -1,7 +1,7 @@
 package wordCocktail.fileModifier;//Changing name of new screenshots into english word.
 //Making links for them and changing name into hungarian translation.
 
-import wordCocktail.betaVersion.TxtCreator;
+import wordCocktail.txtModifiers.TxtCreator;
 import wordCocktail.encoding.DecodeText;
 
 import java.io.*;
