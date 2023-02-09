@@ -1,17 +1,27 @@
 package wordCocktail.txtModifiers;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.AclEntry;
+import java.nio.file.attribute.AclFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Properties;
 
 public class TxtWriter {
     /**
      * Makes a copy of every line of the original txt file in a temporal file then writes the practice date and time
      * into the training diary after the "repeated" index. After that, deletes the original file and rename
      * the temporal file to the original name. //TODO any plainer solution?
+     *
      * @param parentDirPath directory path where the words are located
-     * @param word actual word
+     * @param word          actual word
      * @throws IOException
      */
     public static void saveTrainingDate(String parentDirPath, String word) throws IOException {
@@ -30,15 +40,12 @@ public class TxtWriter {
             }
             writeDateAndTime(writer);
         }
-        boolean delFlag = fileOld.delete();
-        boolean renameFlag = fileTemp.renameTo(new File(parentDirPath + File.separator + word + ".txt"));
-        if (delFlag && renameFlag) {
-            System.out.println("(Time saved in the practice diary.)");
-        }
+        FileChanger.changeTempToOriginal(fileTemp, fileOld, "Practice log updated: ");
     }
 
     /**
      * Writes the practice date and time into the training diary after the "repeated" index.
+     *
      * @param writer BufferedWriter resource from "try" block
      **/
     private static void writeDateAndTime(BufferedWriter writer) throws IOException {
@@ -46,4 +53,6 @@ public class TxtWriter {
                 .ofPattern("yyyy.MM.dd.,HH:mm:ss")
                 .format(LocalDateTime.now()));
     }
+
+
 }

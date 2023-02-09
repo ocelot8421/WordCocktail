@@ -1,6 +1,8 @@
 package wordCocktail;
 
+import wordCocktail.betaVersion.Word;
 import wordCocktail.questioner.Questioner;
+import wordCocktail.txtModifiers.FileChanger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -9,8 +11,17 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Analyzes learning progress by counting the number of times a word has been practiced.
+ */
 public class Analyzer {
 
+    /**
+     * Looks for practice logs in given directory, collects and analyzes them.
+     *
+     * @throws IOException
+     * @throws ParseException
+     */
     public static void analyze() throws IOException, ParseException {
         String directory = Questioner.askForUTF8Answer("\"Where are the words to analyze?\n" +
                 "(For example: C:/words/english/...)");
@@ -35,14 +46,15 @@ public class Analyzer {
     }
 
     /**
-     * Analyzes the lines of practice diary txt file.
+     * Analyzes the lines of practice diary txt file by collecting the same practice dates into
+     * a {@code List<Date>} then these lists are put into the {@code List<List<Date>>} per word.
      *
      * @param directory path of directory contains txt files
      * @param fileTxt   txt file
      * @throws IOException
      */
     private static void analyzeTxtFiles(String directory, File fileTxt) throws IOException, ParseException {
-        File fileTemp = new File(directory + File.separator + "Temp" + ".txt");
+        File fileTemp = new File(directory + File.separator + fileTxt.getName() + "Temp" + ".txt");
         try (FileInputStream fis = new FileInputStream(fileTxt); //https://mkyong.com/java/how-to-read-utf-8-encoded-data-from-a-file-java
              InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
              BufferedReader reader = new BufferedReader(isr);
@@ -52,40 +64,50 @@ public class Analyzer {
             String line;
             int level = 0;
             boolean repeated = false;
-            List<List<Date>> dateArray2d = new ArrayList<>();
-            List<Date> dateArray1d = new ArrayList<>();
+            List<List<Date>> dateList2d = new ArrayList<>();
+            List<Date> dateList1d = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine();
                 if (line.startsWith("repeated,")) {
                     repeated = true;
                     String dateString = line.substring(line.indexOf(",") + 1, line.lastIndexOf(","));
                     Date date = new SimpleDateFormat("yyyy.MM.dd.").parse(dateString);
-                    if (dateArray1d.isEmpty()) {
-                        dateArray1d.add(date);
-                    } else {
-                        if (dateArray1d.contains(date)) {
-                            dateArray1d.add(date);
-                        } else {
-                            dateArray2d.add(new ArrayList<>(dateArray1d));
-                            dateArray1d.clear();
-                            dateArray1d.add(date);
-                        }
-                    }
+                    separateDate(date, dateList1d, dateList2d);
                 }
-//                writer.append(line); //TODO write new txt file with word-level
-//                writer.newLine();
             }
-            dateArray2d.add(dateArray1d);
+            dateList2d.add(dateList1d);
             if (repeated) {
-                int sizeDateArray2d = dateArray2d.size();
-                level = dateArray2d.get(sizeDateArray2d - 1).size();
+                int sizeDateArray2d = dateList2d.size();
+                level = dateList2d.get(sizeDateArray2d - 1).size();
             }
-            System.out.println(level);
-            String fileName = fileTxt.getName();
-            boolean delFlag = fileTxt.delete();
-            boolean renameFlag = fileTemp.renameTo(new File(fileName));
-            if (delFlag && renameFlag) {
-                System.out.println("Analyzed: " + fileName);
+            writer.write("level," + level);
+            writer.newLine();
+            System.out.println("Updated: " + fileTxt.getName() + "\n Level: " + level);
+        }
+        FileChanger.changeTempToOriginal(fileTemp, fileTxt, "");
+    }
+
+    /**
+     * Separates dates and takes them into lists.
+     *
+     * @param date       {@code Date} format of practice date
+     * @param dateList1d {@code List<Date>} contains the same dates
+     * @param dateList2d {@code List<List<Date>>} contains lists of dates per word
+     */
+    private static void separateDate(Date date, List<Date> dateList1d, List<List<Date>> dateList2d) {
+        if (dateList1d.isEmpty()) {
+            dateList1d.add(date);
+        } else {
+            if (dateList1d.contains(date)) {
+                dateList1d.add(date);
+            } else {
+                dateList2d.add(new ArrayList<>(dateList1d));
+                dateList1d.clear();
+                dateList1d.add(date);
             }
         }
     }
+
+
 }
