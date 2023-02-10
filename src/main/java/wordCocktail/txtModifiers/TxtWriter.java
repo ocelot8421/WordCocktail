@@ -1,18 +1,9 @@
 package wordCocktail.txtModifiers;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.AclEntry;
-import java.nio.file.attribute.AclFileAttributeView;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Properties;
 
 public class TxtWriter {
     /**
@@ -49,7 +40,7 @@ public class TxtWriter {
      * @param writer BufferedWriter resource from "try" block
      **/
     private static void writeDateAndTime(BufferedWriter writer) throws IOException {
-        writer.append("repeated").append(DateTimeFormatter
+        writer.append("repeated,").append(DateTimeFormatter
                 .ofPattern("yyyy.MM.dd.,HH:mm:ss")
                 .format(LocalDateTime.now()));
     }

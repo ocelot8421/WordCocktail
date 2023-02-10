@@ -1,4 +1,4 @@
-package wordCocktail.encoding;
+package wordCocktail.fileModifier;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -9,6 +9,13 @@ import java.nio.charset.StandardCharsets;
 
 //https://www.baeldung.com/java-char-encoding#importance_of_character_encoding
 public class DecodeText {
+    /**
+     * Example: String word = DecodeText.decodeText(someString, "UTF-8");
+     * @param input
+     * @param encoding
+     * @return
+     * @throws IOException
+     */
     public static String decodeText(String input, String encoding) throws IOException {
         return
                 new BufferedReader(

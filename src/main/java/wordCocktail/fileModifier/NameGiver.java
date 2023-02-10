@@ -2,7 +2,6 @@ package wordCocktail.fileModifier;//Changing name of new screenshots into englis
 //Making links for them and changing name into hungarian translation.
 
 import wordCocktail.txtModifiers.TxtCreator;
-import wordCocktail.encoding.DecodeText;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -16,7 +15,6 @@ import java.util.Objects;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static wordCocktail.questioner.Questioner.askForUTF8Answer;
-
 
 
 public class NameGiver {
@@ -49,22 +47,14 @@ public class NameGiver {
                 pathRelevant.subpath(pathLength - 1, pathLength) +
                 " -- " +
                 DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").format(LocalDateTime.now()));
-        try {
-            Files.createDirectory(newDirectoryForRenamedFiles);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Files.createDirectory(newDirectoryForRenamedFiles);
         for (File listFile : Objects.requireNonNull(pathNewImages.listFiles())) {
             if (receiveExtension(listFile).equals("png")) {
                 String nameEnglish = contentCSV.get(i)[2];
                 String nameHungarian = DecodeText.decodeText(contentCSV.get(i)[3], "UTF-8");
                 Path oldName = Paths.get(listFile.getAbsolutePath());
                 Path engName = Paths.get(newDirectoryForRenamedFiles + File.separator + nameEnglish + ".png");
-                try {
-                    Files.copy(oldName, engName, REPLACE_EXISTING);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                Files.copy(oldName, engName, REPLACE_EXISTING);
                 LinkCreator.createLink(String.valueOf(engName), newDirectoryForRenamedFiles + File.separator + nameHungarian + ".lnk");
                 TxtCreator.createTXT(contentCSV.get(i), newDirectoryForRenamedFiles);
                 i--;

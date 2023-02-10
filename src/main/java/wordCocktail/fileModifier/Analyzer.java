@@ -1,6 +1,5 @@
-package wordCocktail;
+package wordCocktail.fileModifier;
 
-import wordCocktail.betaVersion.Word;
 import wordCocktail.questioner.Questioner;
 import wordCocktail.txtModifiers.FileChanger;
 
@@ -16,21 +15,37 @@ import java.util.stream.Collectors;
  */
 public class Analyzer {
 
+    public static List<List<Word>> analyzeAndReceiveDifficultyGroups() throws IOException, ParseException {
+        List<Word> words = analyzeDirectory();
+        List<List<Word>> wordGroups = new ArrayList<>();
+        for (int i = 0; i < 20; i++) { //Difficulty till 20
+            int finalI = i;
+            wordGroups.add(
+                    words.stream()
+                            .filter(e -> e.getLevel() == finalI)
+                            .collect(Collectors.toList())
+            );
+        }
+        return wordGroups;
+    }
+
     /**
      * Looks for practice logs in given directory, collects and analyzes them.
      *
      * @throws IOException
      * @throws ParseException
      */
-    public static void analyze() throws IOException, ParseException {
-        String directory = Questioner.askForUTF8Answer("\"Where are the words to analyze?\n" +
+    public static List<Word> analyzeDirectory() throws IOException, ParseException {
+        String directory = Questioner.askForUTF8Answer("\"Where are the words to analyzeDirectory?\n" +
                 "(For example: C:/words/english/...)");
         System.out.println("Collecting txt files...");
         List<File> txtList = collectTxtFiles(directory);
         System.out.println("Analyzing...");
-        for (File file : txtList) {
-            analyzeTxtFiles(directory, file);
+        List<Word> words = new ArrayList<>();
+        for (File fileTxt : txtList) {
+            words.add(analyzeTxtFile(directory, fileTxt));
         }
+        return words;
     }
 
     /**
@@ -53,7 +68,9 @@ public class Analyzer {
      * @param fileTxt   txt file
      * @throws IOException
      */
-    private static void analyzeTxtFiles(String directory, File fileTxt) throws IOException, ParseException {
+    public static Word analyzeTxtFile(String directory, File fileTxt) throws IOException, ParseException {
+        Word wordAnalyzed = new Word(fileTxt);
+        wordAnalyzed.setParentDir(new File(directory));
         File fileTemp = new File(directory + File.separator + fileTxt.getName() + "Temp" + ".txt");
         try (FileInputStream fis = new FileInputStream(fileTxt); //https://mkyong.com/java/how-to-read-utf-8-encoded-data-from-a-file-java
              InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
@@ -69,11 +86,21 @@ public class Analyzer {
             while ((line = reader.readLine()) != null) {
                 writer.write(line);
                 writer.newLine();
-                if (line.startsWith("repeated,")) {
-                    repeated = true;
-                    String dateString = line.substring(line.indexOf(",") + 1, line.lastIndexOf(","));
-                    Date date = new SimpleDateFormat("yyyy.MM.dd.").parse(dateString);
-                    separateDate(date, dateList1d, dateList2d);
+                int indexAfterFirstComma = line.indexOf(',') + 1;
+                switch (line.substring(0, indexAfterFirstComma)) {
+                    case "word,":
+                        wordAnalyzed.setWord(line.substring(indexAfterFirstComma));
+                        break;
+                    case "repeated,":
+                        repeated = true;
+                        String dateString = line.substring(line.indexOf(",") + 1, line.lastIndexOf(","));
+                        Date date = new SimpleDateFormat("yyyy.MM.dd.").parse(dateString);
+                        separateDate(date, dateList1d, dateList2d);
+                        wordAnalyzed.setSaved(date);
+                        break;
+                    case "source,":
+                        wordAnalyzed.setSource(line.substring(indexAfterFirstComma));
+                        break;
                 }
             }
             dateList2d.add(dateList1d);
@@ -84,8 +111,11 @@ public class Analyzer {
             writer.write("level," + level);
             writer.newLine();
             System.out.println("Updated: " + fileTxt.getName() + "\n Level: " + level);
+            wordAnalyzed.setLevel(level);
+
         }
         FileChanger.changeTempToOriginal(fileTemp, fileTxt, "");
+        return wordAnalyzed;
     }
 
     /**

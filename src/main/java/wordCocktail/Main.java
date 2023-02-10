@@ -1,6 +1,8 @@
 package wordCocktail;
 
+import wordCocktail.fileModifier.Analyzer;
 import wordCocktail.fileModifier.NameGiver;
+import wordCocktail.fileModifier.WordCollector;
 import wordCocktail.questioner.QuestionProviderFromAllWords;
 import wordCocktail.questioner.Questioner;
 
@@ -15,6 +17,7 @@ public class Main {
     private static final char H = 'h'; //function chooser - exercise translating hungarian words to english
     private static final char W = 'w'; //function chooser - name new words and screenshots
     private static final char A = 'a'; //function chooser - analyzes the knowledge of word
+    private static final char G = 'g'; //function chooser - regroup into directory by knowledge level
 
     public static void main(String[] args) throws IOException, ParseException {
         starterQuestion(); //Asks what the user want to do
@@ -27,15 +30,20 @@ public class Main {
                 E + ": learning new English words\n" +
                 H + ": practice translating from Hungarian to english\n" +
                 W + ": rename screenshot of new words\n" +
+                G + ": regroup into directory by knowledge level\n" +
                 A + ": analyzes the knowledge of word");
-        while (!List.of(E, H, W, A).contains(flag)) {
+        while (!List.of(E, H, W, A, G).contains(flag)) {
             System.out.println(flag);
-            flag = Questioner.promptCharAnswer("Waiting for valid answer... (" + E + H + W + A + ")");
+            flag = Questioner.promptCharAnswer("Waiting for valid answer... (" + E + H + W + A + G + ")");
         }
         switch (flag) {
             case A:
-                System.out.println("Analyzing the knowledge level of given words -- BETA");
-                Analyzer.analyze();
+                System.out.println("Analyzing the knowledge level of given words");
+                Analyzer.analyzeDirectory();
+                break;
+            case G:
+                System.out.println("Regroup words by difficulty level...");
+                WordCollector.collectByDifficulty();
                 break;
             case W:
                 System.out.println("Importing new screenshots...\n");

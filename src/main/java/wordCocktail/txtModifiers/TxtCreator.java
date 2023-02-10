@@ -1,6 +1,6 @@
 package wordCocktail.txtModifiers;
 
-import wordCocktail.encoding.DecodeText;
+import wordCocktail.fileModifier.DecodeText;
 
 import java.io.File;
 import java.io.FileWriter;
