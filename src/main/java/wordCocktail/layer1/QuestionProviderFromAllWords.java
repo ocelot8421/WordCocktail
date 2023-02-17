@@ -1,6 +1,6 @@
-package wordCocktail.questioner;
+package wordCocktail.layer1;
 
-import wordCocktail.txtModifiers.TxtWriter;
+import wordCocktail.layer2.TxtWriter;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,15 +12,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 
-import static wordCocktail.fileModifier.LinkCreator.openLink;
-import static wordCocktail.questioner.Questioner.*;
+import static wordCocktail.layer2.LinkCreator.openLink;
+import static wordCocktail.layer1.Questioner.*;
 
 public class QuestionProviderFromAllWords {
 
-    public static void askRandomlyFromAllWords(String language) throws IOException {
-        //The directory that contains the images of words
-        String parentDirPath = askForUTF8Answer("Where are the images of words to learn?\n" +
-                "(For example: C:/words/english/...)");
+    public static void askRandomlyFromAllWords(String parentDirPath, String language) throws IOException {
         System.out.println("Searching words...\n");
 
         //List of words that are needed to learn

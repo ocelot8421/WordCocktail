@@ -1,4 +1,4 @@
-package wordCocktail.txtModifiers;
+package wordCocktail.layer2;
 
 import java.io.File;
 

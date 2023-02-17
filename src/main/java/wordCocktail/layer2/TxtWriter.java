@@ -1,4 +1,4 @@
-package wordCocktail.txtModifiers;
+package wordCocktail.layer2;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +31,7 @@ public class TxtWriter {
             }
             writeDateAndTime(writer);
         }
-        FileChanger.changeTempToOriginal(fileTemp, fileOld, "Practice log updated: ");
+        FileChanger.changeTempToOriginal(fileTemp, fileOld, "");
     }
 
     /**
@@ -44,6 +44,4 @@ public class TxtWriter {
                 .ofPattern("yyyy.MM.dd.,HH:mm:ss")
                 .format(LocalDateTime.now()));
     }
-
-
 }

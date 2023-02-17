@@ -1,6 +1,4 @@
-package wordCocktail.txtModifiers;
-
-import wordCocktail.fileModifier.DecodeText;
+package wordCocktail.layer2;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,9 +22,10 @@ public class TxtCreator {
      * @throws IOException
      **/
     public static void createTXT(String[] csvRow, Path directory) throws IOException {
-        String sourceDesignation = directory.getName(2) + "," +
-                directory.getName(3) + "," +
-                directory.getName(4);
+        Path parent = directory.getParent();
+        String sourceDesignation = parent.getParent().getFileName() + "," +
+                parent.getFileName() +","+
+                directory.getFileName();
         createTxtFile(csvRow, directory, sourceDesignation, colHun, colEng);
         createTxtFile(csvRow, directory, sourceDesignation, colEng, colHun);
     }
@@ -62,7 +61,7 @@ public class TxtCreator {
             writer.write("word, " + word + " - " + wordForeign + "\n" +
                     "source, " + source + "\n" +
                     "saved, " + DateTimeFormatter.ofPattern("yyyy.MM.dd.,HH:mm:ss").format(LocalDateTime.now()) +
-                    "level,0"
+                    "\nlevel,0"
             );
         }
     }

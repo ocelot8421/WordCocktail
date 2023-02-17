@@ -1,7 +1,8 @@
-package wordCocktail.fileModifier;//Changing name of new screenshots into english word.
-//Making links for them and changing name into hungarian translation.
+package wordCocktail.layer1;
 
-import wordCocktail.txtModifiers.TxtCreator;
+import wordCocktail.layer2.DecodeText;
+import wordCocktail.layer2.LinkCreator;
+import wordCocktail.layer2.TxtCreator;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,28 +15,25 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static wordCocktail.questioner.Questioner.askForUTF8Answer;
 
-
+/**
+ * Changes the name of new screenshots into an English word. Makes the links for them and names to Hungarian translation.
+ */
 public class NameGiver {
 
-    //Renames new screenshots from the videos
+    /**
+     * Copies new screenshots and renames them to english word.
+     *
+     * @throws IOException
+     */
     public static void renameScreenshots() throws IOException {
-
-        //Asks for the source directory
-        String path = askForUTF8Answer("Where are the new screenshots? \n" +
+        String path = Questioner.promptForUTF8Answer("Where are the new screenshots? \n" +
                 "(For example: C:/words/english/...) \n");
         Path pathRelevant = Paths.get(path);
         int pathLength = pathRelevant.getNameCount();
-        List<String[]> contentCSV = new ArrayList<>();
-
-        //Defines the CSV that contains English-Hungarian words
         File pathNewImages = new File(path);
-        for (File listFile : Objects.requireNonNull(pathNewImages.listFiles())) {
-            if (receiveExtension(listFile).equals("csv")) { //Receive the part of the file name after dot(".")
-                contentCSV = receiveCsvAsList(listFile);
-            }
-        }
+        List<String[]> contentCSV = defineCsv(pathNewImages);
+
 
         //Makes new directory named the original directory append actual date and time
         //Make a copy of png files renamed by the english word from csv
@@ -58,8 +56,23 @@ public class NameGiver {
                 LinkCreator.createLink(String.valueOf(engName), newDirectoryForRenamedFiles + File.separator + nameHungarian + ".lnk");
                 TxtCreator.createTXT(contentCSV.get(i), newDirectoryForRenamedFiles);
                 i--;
+                System.out.print('.');
             }
         }
+        System.out.println();
+        System.out.println("Renaming process finished.");
+        System.out.println();
+    }
+
+    private static List<String[]> defineCsv(File pathNewImages) throws IOException {
+        //Defines the CSV that contains English-Hungarian words
+        List<String[]> contentCSV = new ArrayList<>();
+        for (File listFile : Objects.requireNonNull(pathNewImages.listFiles())) {
+            if (receiveExtension(listFile).equals("csv")) { //Receive the part of the file name after dot(".")
+                contentCSV = receiveCsvAsList(listFile);
+            }
+        }
+        return contentCSV;
     }
 
     //Receives all data from CSV (columns: "angol", "magyar", english word, hungarian word)

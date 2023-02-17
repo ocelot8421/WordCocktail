@@ -1,12 +1,15 @@
-package wordCocktail.fileModifier;
+package wordCocktail.layer1;
 
-import wordCocktail.questioner.Questioner;
-import wordCocktail.txtModifiers.FileChanger;
+import wordCocktail.layer2.FileChanger;
+import wordCocktail.layer2.Word;
+import wordCocktail.thridPartClasses.DatePlanner;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,10 +18,20 @@ import java.util.stream.Collectors;
  */
 public class Analyzer {
 
-    public static List<List<Word>> analyzeAndReceiveDifficultyGroups() throws IOException, ParseException {
-        List<Word> words = analyzeDirectory();
+    private static final int DIFFICULTY = 10;
+    private static final int DAYS = 14;
+
+
+    /**
+     * @param directory
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
+    public static List<List<Word>> analyzeAndReceiveDifficultyGroups(String directory) throws IOException, ParseException {
+        List<Word> words = analyzeDirectory(directory);
         List<List<Word>> wordGroups = new ArrayList<>();
-        for (int i = 0; i < 20; i++) { //Difficulty till 20
+        for (int i = 0; i < DIFFICULTY; i++) {
             int finalI = i;
             wordGroups.add(
                     words.stream()
@@ -29,21 +42,37 @@ public class Analyzer {
         return wordGroups;
     }
 
+    public static List<List<Word>> receiveDateGroups(String directory) throws IOException, ParseException {
+        List<Word> words = analyzeDirectory(directory);
+        List<List<Word>> group = new ArrayList<>();
+        Date today = Calendar.getInstance().getTime();
+        for (int i = 0; i < DAYS; i++) {
+            Date groupDate = DatePlanner.addDays(today, i);
+            Date groupDateNext = DatePlanner.addDays(today, i + 1);
+            group.add(
+                    words.stream()
+                            .filter(e ->
+                                    e.getNearestPlannedExercise().after(groupDate) &&
+                                            e.getNearestPlannedExercise().before(groupDateNext))
+                            .collect(Collectors.toList())
+            );
+        }
+        return group;
+    }
+
     /**
      * Looks for practice logs in given directory, collects and analyzes them.
      *
      * @throws IOException
      * @throws ParseException
      */
-    public static List<Word> analyzeDirectory() throws IOException, ParseException {
-        String directory = Questioner.askForUTF8Answer("\"Where are the words to analyzeDirectory?\n" +
-                "(For example: C:/words/english/...)");
+    public static List<Word> analyzeDirectory(String directoryPath) throws IOException, ParseException {
         System.out.println("Collecting txt files...");
-        List<File> txtList = collectTxtFiles(directory);
+        List<File> txtList = collectTxtFiles(directoryPath);
         System.out.println("Analyzing...");
         List<Word> words = new ArrayList<>();
         for (File fileTxt : txtList) {
-            words.add(analyzeTxtFile(directory, fileTxt));
+            words.add(analyzeTxtFile(directoryPath, fileTxt));
         }
         return words;
     }
@@ -72,17 +101,21 @@ public class Analyzer {
         Word wordAnalyzed = new Word(fileTxt);
         wordAnalyzed.setParentDir(new File(directory));
         File fileTemp = new File(directory + File.separator + fileTxt.getName() + "Temp" + ".txt");
+
         try (FileInputStream fis = new FileInputStream(fileTxt); //https://mkyong.com/java/how-to-read-utf-8-encoded-data-from-a-file-java
              InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
              BufferedReader reader = new BufferedReader(isr);
              FileOutputStream fos = new FileOutputStream(fileTemp);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
              BufferedWriter writer = new BufferedWriter(osw)) {
+
             String line;
             int level = 0;
             boolean repeated = false;
-            List<List<Date>> dateList2d = new ArrayList<>();
+            Date date;
+            Date nearestPlannedDateFromTxt = new Date();
             List<Date> dateList1d = new ArrayList<>();
+            List<List<Date>> dateList2d = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 writer.write(line);
                 writer.newLine();
@@ -93,13 +126,22 @@ public class Analyzer {
                         break;
                     case "repeated,":
                         repeated = true;
-                        String dateString = line.substring(line.indexOf(",") + 1, line.lastIndexOf(","));
-                        Date date = new SimpleDateFormat("yyyy.MM.dd.").parse(dateString);
+                        date = receiveDateFromLine(line);
                         separateDate(date, dateList1d, dateList2d);
-                        wordAnalyzed.setSaved(date);
                         break;
                     case "source,":
                         wordAnalyzed.setSource(line.substring(indexAfterFirstComma));
+                        break;
+                    case "planned,":
+                        nearestPlannedDateFromTxt = new SimpleDateFormat("yyyy.MM.dd.,HH:mm:ss").parse(line.substring(indexAfterFirstComma)); //TODO too long line
+                        break;
+                    case "saved,":
+                        date = receiveDateFromLine(line);
+                        wordAnalyzed.setSavedDate(date);
+                        wordAnalyzed.setPlannedDate();
+                        break;
+                    case "level,":
+                        wordAnalyzed.setLevel(Integer.parseInt(line.substring(indexAfterFirstComma)));
                         break;
                 }
             }
@@ -108,14 +150,44 @@ public class Analyzer {
                 int sizeDateArray2d = dateList2d.size();
                 level = dateList2d.get(sizeDateArray2d - 1).size();
             }
-            writer.write("level," + level);
-            writer.newLine();
+            if (wordAnalyzed.getLevel() != level) {
+                wordAnalyzed.setLevel(level);
+                writer.write("level," + level);
+                writer.newLine();
+            }
+            writePlannedDate(writer, nearestPlannedDateFromTxt, wordAnalyzed);
+
             System.out.println("Updated: " + fileTxt.getName() + "\n Level: " + level);
             wordAnalyzed.setLevel(level);
-
         }
         FileChanger.changeTempToOriginal(fileTemp, fileTxt, "");
         return wordAnalyzed;
+    }
+
+    /**
+     * @source <a href="https://stackoverflow.com/questions/3469507/how-can-i-change-the-date-format-in-java">stackoverflow, date-format </a>
+     * @source <a href="https://stackoverflow.com/questions/35722729/java-convert-cet-string-to-date">stackoverflow, cet </a>
+     */
+    private static void writePlannedDate(BufferedWriter writer, Date nearestPlannedDateFromTxt, Word wordAnalyzed) throws IOException {
+        if (nearestPlannedDateFromTxt.getTime() != wordAnalyzed.getNearestPlannedExercise().getTime()) {
+            nearestPlannedDateFromTxt = wordAnalyzed.getNearestPlannedExercise();
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+            sdf.applyPattern("yyyy.MM.dd.,HH:mm:ss");
+            writer.write("planned," + sdf.format(nearestPlannedDateFromTxt));
+            writer.newLine();
+        }
+    }
+
+    /**
+     * For example:  repeated,2023.01.30.,23:27:56 -> 2023.01.30.
+     *
+     * @param line string line from txt file
+     * @return date that was written after the index expression.
+     * @throws ParseException
+     */
+    private static Date receiveDateFromLine(String line) throws ParseException {
+        String dateString = line.substring(line.indexOf(",") + 1, line.lastIndexOf(","));
+        return new SimpleDateFormat("yyyy.MM.dd.").parse(dateString);
     }
 
     /**
