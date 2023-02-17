@@ -21,12 +21,12 @@ public class DateCollector {
         List<List<Word>> groups = Analyzer.receiveDateGroups(directory);
         Path datesDir = createGroupDir(groups);
 
-        String dateIDDirPrefix = "date_";
+        String dateIDirPrefix = "date_";
         Date today = Calendar.getInstance().getTime();
-        String dateIDDirPostfix;
+        String dateIDirPostfix;
         for (int i = 0; i < groups.size(); i++) {
-            dateIDDirPostfix = formatPrettyDate(today, i);
-            Path dateIDir = Paths.get(datesDir + File.separator + dateIDDirPrefix + dateIDDirPostfix);
+            dateIDirPostfix = formatPrettyDate(today, i + 1);
+            Path dateIDir = Paths.get(datesDir + File.separator + dateIDirPrefix + dateIDirPostfix);
             if (!Files.exists(dateIDir)) Files.createDirectory(dateIDir);
             List<Word> groupI = groups.get(i);
             for (Word w : groupI) {

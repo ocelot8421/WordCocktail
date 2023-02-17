@@ -17,7 +17,9 @@ import static wordCocktail.layer1.Questioner.promptForUTF8Answer;
  * Handles directories these contain words collected by knowledge levels. Works in "levels" directory.
  */
 public class Level {
+
     public static void exerciseByLevelOrDate(String groupsDirName) throws IOException, ParseException {
+        String groupsNamePrefix = groupsDirName.substring(0, groupsDirName.indexOf('s')) + '_';
         String stringDir = promptForUTF8Answer("Where are " +
                 groupsDirName + " directory? For example: C:/words/english/...)");
         isLevelsDir(stringDir, groupsDirName);
@@ -42,7 +44,6 @@ public class Level {
         for (int i = 0; i < level_i_directories.length; i++) {
             size = Objects.requireNonNull(level_i_directories[i].list()).length;
             name = level_i_directories[i].toPath().getFileName().toString();
-            name = name.substring(0, name.indexOf("_") + 2);
             sizePng = (int) Arrays.stream(Objects.requireNonNull(level_i_directories[i].list()))
                     .filter(e -> e.endsWith(".png")).count();
             sizeLnk = (int) Arrays.stream(Objects.requireNonNull(level_i_directories[i].list()))
@@ -76,11 +77,12 @@ public class Level {
      * @throws IOException
      */
     private static String chooseDirToExercise(String stringDir, int levelsNum) throws IOException {
-        int chosenDir = Questioner.promptIntAnswer("Which directory do you want to exercise? 0 - " + (levelsNum - 1));
-        if (chosenDir < 0 || chosenDir > levelsNum) {
+        int chosenDirInt = Questioner.promptIntAnswer("Which directory do you want to exercise? 0 - " + (levelsNum - 1));
+        if (chosenDirInt < 0 || chosenDirInt > levelsNum) {
             System.out.println("Choose between 0 and " + (levelsNum - 1));
             chooseDirToExercise(stringDir, levelsNum);
         }
+        String chosenDirString = Objects.requireNonNull(new File(stringDir).list())[chosenDirInt];
         char flag = Questioner.promptCharAnswer("What do you want to do?\n" +
                 "e: learning new English words\n" +
                 "h: practice translating from Hungarian to english\n");
@@ -88,7 +90,7 @@ public class Level {
             System.out.println(flag);
             flag = Questioner.promptCharAnswer("Waiting for valid answer... (e, h)");
         }
-        String parentDirPath = stringDir + File.separator + "level_" + chosenDir;
+        String parentDirPath = stringDir + File.separator + chosenDirString;
         switch (flag) {
             case 'e':
                 System.out.println("Starting English word recognition task...\n");

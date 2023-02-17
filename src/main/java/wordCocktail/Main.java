@@ -16,6 +16,7 @@ public class Main {
     private static final char G = 'g'; //function chooser - regroup into directory by knowledge level
     private static final char L = 'l'; //function chooser - exercise by levels
     private static final char D = 'd'; //function chooser - planed exercise date
+    private static final char F = 'f'; //function chooser - planed exercise date
     private static final char T = 'm'; //function chooser - for test/debug with windows command line - not appears to the user
 
     public static void main(String[] args) throws IOException, ParseException {
@@ -71,10 +72,14 @@ public class Main {
                 Main.starterQuestion();
                 break;
             case D:
-                Questioner.promptForUTF8Answer(
+               String p = Questioner.promptForUTF8Answer(
                         "Looking for words are needed to exercise per given day...\n" +
                                 "Where are \"dates\" directory?\n" +
                                 "(For example: C:/words/english/...)");
+                DateCollector.collectByDate(false, p);
+                Main.starterQuestion();
+                break;
+            case F:
                 Level.exerciseByLevelOrDate("dates");
                 Main.starterQuestion();
                 break;
@@ -87,7 +92,7 @@ public class Main {
     }
 
     private static char isValidCharAnswer(char flag) {
-        while (!List.of(E, H, W, A, G, L, D, T).contains(flag)) {
+        while (!List.of(E, H, W, A, G, L, D, F, T).contains(flag)) {
             flag = Questioner.promptCharAnswer("Waiting for valid answer... (" + E + H + W + A + G + L + D + ")");
         }
         return flag;
@@ -101,6 +106,7 @@ public class Main {
                 G + ": regroup into directory by knowledge level\n" +
                 A + ": analyze the knowledge of word\n" +
                 D + ": updates the next planned repeating date\n" +
+                F + ": practice by dates\n" +
                 L + ": exercise by levels";
     }
 }

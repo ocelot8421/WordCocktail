@@ -19,8 +19,6 @@ public class QuestionProviderFromAllWords {
 
     public static void askRandomlyFromAllWords(String parentDirPath, String language) throws IOException {
         System.out.println("Searching words...\n");
-
-        //List of words that are needed to learn
         List<String> words = listWords(parentDirPath, language);
 
 
